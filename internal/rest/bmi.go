@@ -10,8 +10,9 @@ import (
 
 //go:generate mockery --name BmiService
 type BmiService interface {
-	CalculateBmi(bmiRequest domain.BmiRequest) float32
-	CheckBmi(bmiValue float32) domain.BmiResponse
+	GetCalculateBmiResult(bmiRequest domain.Bmi) domain.Bmi
+	CalculateBmi(bmiRequest domain.Bmi) float32
+	CheckBmi(bmiValue float32) domain.Bmi
 }
 
 type BmiHandler struct {
@@ -25,7 +26,7 @@ func NewBmiHandler(e *echo.Echo, svc BmiService) {
 	e.POST("/bmi", handler.CalculateBmi)
 }
 
-func isRequestBmiValid(m *domain.BmiRequest) (bool, error) {
+func isRequestBmiValid(m *domain.Bmi) (bool, error) {
 	validate := validator.New()
 	err := validate.Struct(m)
 	if err != nil {
@@ -35,7 +36,7 @@ func isRequestBmiValid(m *domain.BmiRequest) (bool, error) {
 }
 
 func (a *BmiHandler) CalculateBmi(c echo.Context) error {
-	req := domain.BmiRequest{}
+	req := domain.Bmi{}
 
 	err := c.Bind(&req)
 	if err != nil {
@@ -47,8 +48,7 @@ func (a *BmiHandler) CalculateBmi(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
-	bmi := a.Service.CalculateBmi(req)
-	bmiResult := a.Service.CheckBmi(bmi)
+	bmiResult := a.Service.GetCalculateBmiResult(req)
 
 	return c.JSON(http.StatusOK, bmiResult)
 }

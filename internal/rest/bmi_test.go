@@ -16,7 +16,7 @@ import (
 )
 
 func TestBmiHandler_CalculateBmi(t *testing.T) {
-	mockBmi := domain.BmiRequest{
+	mockBmi := domain.Bmi{
 		Height: 100,
 		Weight: 50,
 	}

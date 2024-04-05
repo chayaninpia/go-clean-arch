@@ -9,7 +9,7 @@ import (
 
 func TestService_CalculateBmi(t *testing.T) {
 	type args struct {
-		bmiRequest domain.BmiRequest
+		bmiRequest domain.Bmi
 	}
 	tests := []struct {
 		name string
@@ -21,7 +21,7 @@ func TestService_CalculateBmi(t *testing.T) {
 			name: "test calculation",
 			s:    NewService(),
 			args: args{
-				domain.BmiRequest{
+				domain.Bmi{
 					Height: 100,
 					Weight: 50,
 				},
@@ -47,7 +47,7 @@ func TestService_CheckBmi(t *testing.T) {
 		name string
 		s    *Service
 		args args
-		want domain.BmiResponse
+		want domain.Bmi
 	}{
 		{
 			name: "test <= 18.5",
@@ -55,7 +55,7 @@ func TestService_CheckBmi(t *testing.T) {
 			args: args{
 				bmiValue: 18,
 			},
-			want: domain.BmiResponse{
+			want: domain.Bmi{
 				Bmi:    18,
 				Result: "ผอมเกินไป",
 			},
@@ -66,7 +66,7 @@ func TestService_CheckBmi(t *testing.T) {
 			args: args{
 				bmiValue: 25,
 			},
-			want: domain.BmiResponse{
+			want: domain.Bmi{
 				Bmi:    25,
 				Result: "น้ำหนักปกติ",
 			},
@@ -77,7 +77,7 @@ func TestService_CheckBmi(t *testing.T) {
 			args: args{
 				bmiValue: 30,
 			},
-			want: domain.BmiResponse{
+			want: domain.Bmi{
 				Bmi:    30,
 				Result: "เริ่มอ้วน",
 			},
@@ -88,7 +88,7 @@ func TestService_CheckBmi(t *testing.T) {
 			args: args{
 				bmiValue: 35,
 			},
-			want: domain.BmiResponse{
+			want: domain.Bmi{
 				Bmi:    35,
 				Result: "อ้วน",
 			},
@@ -99,7 +99,7 @@ func TestService_CheckBmi(t *testing.T) {
 			args: args{
 				bmiValue: 40,
 			},
-			want: domain.BmiResponse{
+			want: domain.Bmi{
 				Bmi:    40,
 				Result: "อ้วนมากผิดปกติ",
 			},
@@ -110,6 +110,43 @@ func TestService_CheckBmi(t *testing.T) {
 			s := &Service{}
 			if got := s.CheckBmi(tt.args.bmiValue); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Service.CheckBmi() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestService_GetCalculateBmiResult(t *testing.T) {
+	type args struct {
+		bmiRequest domain.Bmi
+	}
+	tests := []struct {
+		name string
+		s    *Service
+		args args
+		want domain.Bmi
+	}{
+		{
+			name: "test calculation",
+			s:    NewService(),
+			args: args{
+				domain.Bmi{
+					Height: 100,
+					Weight: 50,
+				},
+			},
+			want: domain.Bmi{
+				Height: 100,
+				Weight: 50,
+				Bmi:    50,
+				Result: "อ้วนมากผิดปกติ",
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s := &Service{}
+			if got := s.GetCalculateBmiResult(tt.args.bmiRequest); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Service.GetCalculateBmiResult() = %v, want %v", got, tt.want)
 			}
 		})
 	}

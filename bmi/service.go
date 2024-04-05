@@ -10,7 +10,14 @@ func NewService() *Service {
 	return &Service{}
 }
 
-func (s *Service) CalculateBmi(bmiRequest domain.BmiRequest) float32 {
+func (s *Service) GetCalculateBmiResult(bmiRequest domain.Bmi) domain.Bmi {
+	result := s.CheckBmi(s.CalculateBmi(bmiRequest))
+	result.Height = bmiRequest.Height
+	result.Weight = bmiRequest.Weight
+	return result
+}
+
+func (s *Service) CalculateBmi(bmiRequest domain.Bmi) float32 {
 	meterHeight := bmiRequest.Height
 	if bmiRequest.Height > 3 {
 		meterHeight = bmiRequest.Height / 100
@@ -19,7 +26,7 @@ func (s *Service) CalculateBmi(bmiRequest domain.BmiRequest) float32 {
 	return bmiRequest.Weight / (meterHeight * meterHeight)
 }
 
-func (s *Service) CheckBmi(bmiValue float32) domain.BmiResponse {
+func (s *Service) CheckBmi(bmiValue float32) domain.Bmi {
 
 	result := ""
 	if bmiValue <= 18.5 {
@@ -33,7 +40,7 @@ func (s *Service) CheckBmi(bmiValue float32) domain.BmiResponse {
 	} else {
 		result = "อ้วนมากผิดปกติ"
 	}
-	return domain.BmiResponse{
+	return domain.Bmi{
 		Bmi:    bmiValue,
 		Result: result,
 	}
