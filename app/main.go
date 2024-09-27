@@ -12,6 +12,8 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/labstack/echo/v4"
 
+	"github.com/bxcodec/go-clean-arch/bmi"
+	"github.com/bxcodec/go-clean-arch/bytecompare"
 	mysqlRepo "github.com/bxcodec/go-clean-arch/internal/repository/mysql"
 
 	"github.com/bxcodec/go-clean-arch/article"
@@ -78,7 +80,12 @@ func main() {
 
 	// Build service Layer
 	svc := article.NewService(articleRepo, authorRepo)
+	bmiSvc := bmi.NewService()
+	cmpSvc := bytecompare.NewService()
+
 	rest.NewArticleHandler(e, svc)
+	rest.NewBmiHandler(e, bmiSvc)
+	rest.NewCompareHandler(e, cmpSvc)
 
 	// Start Server
 	address := os.Getenv("SERVER_ADDRESS")
